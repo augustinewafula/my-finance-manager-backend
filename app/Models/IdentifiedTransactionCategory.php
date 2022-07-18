@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\StoresUserId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class IdentifiedTransactionCategory extends Model
 {
-    use HasFactory;
+    use HasFactory, StoresUserId;
 
     protected $fillable = [
         'user_id',
