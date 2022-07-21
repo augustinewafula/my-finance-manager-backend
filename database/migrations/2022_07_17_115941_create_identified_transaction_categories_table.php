@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('subject');
             $table->foreignId('transaction_category_id');
             $table->foreign('transaction_category_id', 'identified_categories_transaction_category_id_foreign')->references('id')->on('transaction_categories')->cascadeOnDelete();
+            $table->foreignId('transaction_sub_category_id')->nullable();
+            $table->foreign('transaction_sub_category_id', 'identified_categories_transaction_sub_category_id_foreign')->references('id')->on('transaction_sub_categories')->cascadeOnDelete();
             $table->timestamps();
         });
     }

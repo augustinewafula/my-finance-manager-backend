@@ -20,7 +20,8 @@ class MpesaTransaction extends Model
         'type',
         'amount',
         'subject',
-        'transaction_category_id'
+        'transaction_category_id',
+        'transaction_sub_category_id'
     ];
 
     public function user(): BelongsTo

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('amount', 10);
             $table->string('subject');
             $table->foreignId('transaction_category_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('transaction_sub_category_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps(6);
         });
     }
