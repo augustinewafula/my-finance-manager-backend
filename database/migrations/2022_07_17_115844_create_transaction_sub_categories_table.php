@@ -14,10 +14,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transaction_sub_categories', static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignId('transaction_category_id');
-            $table->foreign('transaction_category_id', 'transaction_sub_categories_transaction_category_id_foreign')->references('id')->on('transaction_categories')->cascadeOnDelete();
+            $table->foreignUuid('transaction_category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,7 +26,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('transaction_sub_categories');
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use App\Traits\StoresUserId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MpesaTransaction extends Model
 {
-    use HasFactory, StoresUserId;
+    use HasUuid, HasFactory, StoresUserId;
 
+    public $incrementing = false;
+    protected $keyType = 'uuid';
     protected $dateFormat = 'Y-m-d H:i:s.u';
-
     protected $fillable = [
         'user_id',
         'reference_code',

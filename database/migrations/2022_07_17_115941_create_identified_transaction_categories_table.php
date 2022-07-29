@@ -14,14 +14,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('identified_transaction_categories', static function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('subject');
-            $table->foreignId('transaction_category_id');
-            $table->foreign('transaction_category_id', 'identified_categories_transaction_category_id_foreign')->references('id')->on('transaction_categories')->cascadeOnDelete();
-            $table->foreignId('transaction_sub_category_id')->nullable();
-            $table->foreign('transaction_sub_category_id', 'identified_categories_transaction_sub_category_id_foreign')->references('id')->on('transaction_sub_categories')->cascadeOnDelete();
+            $table->uuid('transaction_category_id');
+            $table->uuid('transaction_sub_category_id')->nullable();
             $table->timestamps();
+            $table->foreign('transaction_category_id', 'identified_categories_transaction_category_id_foreign')->references('id')->on('transaction_categories')->cascadeOnDelete();
+            $table->foreign('transaction_sub_category_id', 'identified_categories_transaction_sub_category_id_foreign')->references('id')->on('transaction_sub_categories')->cascadeOnDelete();
         });
     }
 

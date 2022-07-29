@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use App\Traits\StoresUserId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,8 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class IdentifiedTransactionCategory extends Model
 {
-    use HasFactory, StoresUserId;
+    use HasUuid, HasFactory, StoresUserId;
 
+    public $incrementing = false;
+    protected $keyType = 'uuid';
     protected $fillable = [
         'user_id',
         'subject',
