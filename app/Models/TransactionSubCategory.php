@@ -15,5 +15,6 @@ class TransactionSubCategory extends Model
     protected $fillable = [
         'name',
         'transaction_category_id',
+        'created_by',
     ];
 }

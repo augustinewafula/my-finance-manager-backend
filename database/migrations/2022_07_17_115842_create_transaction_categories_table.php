@@ -16,7 +16,13 @@ return new class extends Migration
         Schema::create('transaction_categories', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->uuid('created_by')->nullable();
             $table->timestamps();
+            $table->foreign('created_by')
+                ->references('id')
+                ->on('users')
+                ->constrained('users')
+                ->cascadeOnDelete();
         });
     }
 

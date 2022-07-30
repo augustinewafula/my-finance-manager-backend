@@ -17,7 +17,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->foreignUuid('transaction_category_id')->constrained()->cascadeOnDelete();
+            $table->uuid('created_by')->nullable();
             $table->timestamps();
+            $table->foreign('created_by')
+                ->references('id')
+                ->on('users')
+                ->constrained()
+                ->cascadeOnDelete();
         });
     }
 

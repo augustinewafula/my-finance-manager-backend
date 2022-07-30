@@ -14,5 +14,6 @@ class TransactionCategory extends Model
     protected $keyType = 'uuid';
     protected $fillable = [
         'name',
+        'created_by',
     ];
 }
