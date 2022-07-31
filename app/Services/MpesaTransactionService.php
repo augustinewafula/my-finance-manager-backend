@@ -22,6 +22,8 @@ class MpesaTransactionService
         $sliced_message_array_as_from_ksh = Str::of($sliced_message_as_from_ksh)->explode(' ');
 
         $amount = $sliced_message_array_as_from_ksh[0];
+        $amount = Str::of($amount)->remove(',')->toString();
+
         $type = $sliced_message_array_as_from_ksh[1];
 
         $subject = Str::betweenFirst($message, 'to', 'on');
@@ -54,7 +56,7 @@ class MpesaTransactionService
             'type' => ['required', new EnumValue(TransactionType::class)],
             'amount' => 'required|numeric|min:1',
             'subject' => 'required|string|max:50',
-        ]);
+        ], ['reference_code.unique' => 'Transaction already exists']);
         if ($validator->fails()) {
             Log::info($validator->errors());
             throw new Exception($validator->errors()->first());
