@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasUuid;
 use App\Traits\StoresCreatedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,6 +21,14 @@ class TransactionSubCategory extends Model
         'transaction_category_id',
         'created_by',
     ];
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: static fn ($value) => $value,
+            set: static fn ($value) => ucfirst(strtolower($value)),
+        );
+    }
 
     public function scopeDefault(Builder $query): Builder
     {
