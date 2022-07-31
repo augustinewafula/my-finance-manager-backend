@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +20,13 @@ class UserController extends Controller
     {
         $token = $userService->login($request->email);
         return response()->json(['token' => $token]);
+    }
+
+    public function register(RegisterRequest $request, UserService $userService): JsonResponse
+    {
+        $user = $userService->store($request->name, $request->email, $request->password);
+        $token = $userService->login($user->email);
+        return response()->json(['token' => $token], 201);
     }
 
     public function logout(UserService $userService): JsonResponse

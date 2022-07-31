@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MpesaTransactionController;
+use App\Http\Controllers\TransactionCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,9 @@ Route::prefix('v1')->group(function () {
     Route::post('login', [UserController::class, 'login']);
     Route::group(['middleware' => ['auth:sanctum']], static function () {
         Route::get('user', [UserController::class, 'user']);
+        Route::post('register', [UserController::class, 'register']);
         Route::get('logout', [UserController::class, 'logout']);
         Route::post('mpesa-transaction', [MpesaTransactionController::class, 'store']);
+        Route::apiResource('transaction-category', TransactionCategoryController::class);
     });
 });
