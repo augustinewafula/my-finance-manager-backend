@@ -23,7 +23,7 @@ class TransactionSubCategory extends Model
 
     public function scopeDefault(Builder $query): Builder
     {
-        return $query->where('created_by', null);
+        return $query->whereCreatedBy(null);
     }
 
     public function users(): BelongsToMany

@@ -12,7 +12,7 @@ class UserService
 
     public function login($email): string
     {
-        $user = User::where('email', $email)->first();
+        $user = User::whereEmail($email)->first();
         return $user->createToken('access_token')->plainTextToken;
     }
 
