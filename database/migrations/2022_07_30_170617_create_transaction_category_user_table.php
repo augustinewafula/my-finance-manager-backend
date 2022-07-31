@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_transaction_categories', static function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        Schema::create('transaction_category_user', static function (Blueprint $table) {
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('transaction_category_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_transaction_categories');
+        Schema::dropIfExists('transaction_category_user');
     }
 };

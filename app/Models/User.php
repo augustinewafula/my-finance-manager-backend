@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,6 +50,18 @@ class User extends Authenticatable
     public function transactions(): HasMany
     {
         return $this->hasMany(MpesaTransaction::class);
+    }
+
+    //transaction categories that belongs to user
+    public function transactionCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(TransactionCategory::class);
+    }
+
+
+    public function transactionSubCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(TransactionSubCategory::class);
     }
 
     public function identifiedTransactionCategories(): HasMany
