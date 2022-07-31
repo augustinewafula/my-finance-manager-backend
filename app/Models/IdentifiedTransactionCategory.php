@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasUuid;
 use App\Traits\StoresUserId;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,14 @@ class IdentifiedTransactionCategory extends Model
         'subject',
         'transaction_category_id'
     ];
+
+    protected function subject(): Attribute
+    {
+        return Attribute::make(
+            get: static fn ($value) => $value,
+            set: static fn ($value) => ucwords(strtolower($value)),
+        );
+    }
 
     public function transactionCategory(): BelongsTo
     {
