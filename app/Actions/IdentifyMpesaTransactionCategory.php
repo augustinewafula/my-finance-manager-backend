@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\IdentifiedTransactionCategory;
 use App\Models\TransactionCategory;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class IdentifyMpesaTransactionCategory
@@ -12,16 +13,11 @@ class IdentifyMpesaTransactionCategory
     {
         $transactionType = Str::of($transactionType)
             ->lower()
-            ->ucfirst()
             ->toString();
-
+        Log::info('type: '.$transactionType);
         if ($category = $this->existsInIdentifiedCategories($transactionType)) {
             return $category;
         }
-
-        $transactionType = Str::of($transactionType)
-            ->lower()
-            ->toString();
 
         $preIdentifiedTransactionCategories = $this->getPreIdentifiedTransactionCategories();
 
@@ -49,12 +45,12 @@ class IdentifyMpesaTransactionCategory
 
     public function existsInIdentifiedCategories(string $transactionType): bool|array
     {
-        $identifiedCategories = IdentifiedTransactionCategory::whereSubject($transactionType)->first();
+        $identifiedCategory = IdentifiedTransactionCategory::whereSubject($transactionType)->first();
 
-        if ($identifiedCategories) {
+        if ($identifiedCategory) {
             return [
-                'category_id' => $identifiedCategories->category_id,
-                'sub_category_id' => $identifiedCategories->sub_category_id,
+                'category_id' => $identifiedCategory->transaction_category_id,
+                'sub_category_id' => $identifiedCategory->transaction_sub_category_id,
             ];
         }
 
