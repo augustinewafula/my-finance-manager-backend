@@ -35,6 +35,11 @@ class TransactionSubCategory extends Model
         return $query->whereCreatedBy(null);
     }
 
+    public function scopeForCurrentUser(Builder $query): Builder
+    {
+        return $query->whereCreatedBy(auth()->id());
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
