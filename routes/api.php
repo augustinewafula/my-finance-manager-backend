@@ -29,3 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
     });
 });
+Route::fallback(static function () {
+    return response()->json([
+        'message' => 'Route not found.'], 404);
+});
