@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('reference_code');
-            $table->string('message');
+            $table->text('message');
             $table->tinyInteger('type');
             $table->decimal('amount', 10);
             $table->string('subject');
