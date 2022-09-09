@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Actions\IdentifyMpesaTransactionCategory;
 use App\Enums\TransactionType;
 use App\Models\MpesaTransaction;
 use BenSampo\Enum\Rules\EnumValue;
@@ -11,6 +10,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class MpesaTransactionService
 {
@@ -70,7 +70,7 @@ class MpesaTransactionService
         ], ['reference_code.unique' => 'Transaction already exists']);
         if ($validator->fails()) {
             Log::info($validator->errors());
-            throw new Exception($validator->errors()->first());
+            throw new ValidationException($validator);
         }
     }
 
