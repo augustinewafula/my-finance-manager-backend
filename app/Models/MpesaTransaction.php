@@ -24,7 +24,8 @@ class MpesaTransaction extends Model
         'amount',
         'subject',
         'transaction_category_id',
-        'transaction_sub_category_id'
+        'transaction_sub_category_id',
+        'date',
     ];
 
     protected function subject(): Attribute

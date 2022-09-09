@@ -21,6 +21,7 @@ return new class extends Migration
             $table->tinyInteger('type');
             $table->decimal('amount', 10);
             $table->string('subject');
+            $table->dateTime('date');
             $table->foreignUuid('transaction_category_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('transaction_sub_category_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps(6);

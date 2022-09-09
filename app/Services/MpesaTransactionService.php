@@ -6,6 +6,7 @@ use App\Actions\IdentifyMpesaTransactionCategory;
 use App\Enums\TransactionType;
 use App\Models\MpesaTransaction;
 use BenSampo\Enum\Rules\EnumValue;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -29,6 +30,14 @@ class MpesaTransactionService
         $subject = Str::betweenFirst($message, 'to', 'on');
         $subject = Str::squish($subject);
 
+        $date = Str::betweenFirst($message, '. on', 'at');
+        $date = Str::of($date)->trim()->toString();
+
+        $time = Str::betweenFirst($message, 'at', '.');
+        $time = Str::of($time)->trim()->toString();
+
+        $full_date = Carbon::createFromFormat('d/m/y g:i A', "$date $time")->toDateTimeString();
+
         $type = match ($type) {
             'paid' => TransactionType::PAID,
             'sent' => TransactionType::SENT,
@@ -42,6 +51,7 @@ class MpesaTransactionService
             'type' => $type,
             'amount' => $amount,
             'subject' => $subject,
+            'date' => $full_date,
         ];
 
     }
@@ -56,6 +66,7 @@ class MpesaTransactionService
             'type' => ['required', new EnumValue(TransactionType::class)],
             'amount' => 'required|numeric|min:1',
             'subject' => 'required|string|max:50',
+            'date' => 'required|date',
         ], ['reference_code.unique' => 'Transaction already exists']);
         if ($validator->fails()) {
             Log::info($validator->errors());
@@ -75,6 +86,7 @@ class MpesaTransactionService
             'amount' => $decodeMessage['amount'],
             'subject' => $decodeMessage['subject'],
             'message' => $message,
+            'date' => $decodeMessage['date'],
             'transaction_category_id' => $category['category_id'],
             'transaction_sub_category_id' => $category['sub_category_id'],
         ]);
