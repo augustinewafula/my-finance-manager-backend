@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mpesa_transactions', static function (Blueprint $table) {
+        Schema::create('transactions', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->string('reference_code');
-            $table->text('message');
+            $table->text('message')->nullable();
             $table->tinyInteger('type');
             $table->decimal('amount', 10);
+            $table->decimal('transaction_cost', 10)->nullable();
             $table->string('subject');
             $table->dateTime('date');
             $table->foreignUuid('transaction_category_id')->constrained()->cascadeOnDelete();
@@ -35,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mpesa_transactions');
+        Schema::dropIfExists('transactions');
     }
 };

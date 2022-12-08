@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     public function transactions(): HasMany
     {
-        return $this->hasMany(MpesaTransaction::class);
+        return $this->hasMany(Transaction::class);
     }
 
     //transaction categories that belongs to user

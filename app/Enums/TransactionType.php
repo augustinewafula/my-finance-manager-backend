@@ -6,9 +6,9 @@ use BenSampo\Enum\Enum;
 
 final class TransactionType extends Enum
 {
-    const SENT =   1;
-    const RECEIVED =   2;
-    const WITHDRAW = 3;
-    const PAID = 4;
-    const UNKNOWN = 5;
+    public const SENT =   1;
+    public const RECEIVED =   2;
+    public const WITHDRAW = 3;
+    public const PAID = 4;
+    public const UNKNOWN = 5;
 }

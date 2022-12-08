@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\MpesaTransactionController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionCategoryController;
 use App\Http\Controllers\TransactionSubCategoryController;
 use App\Http\Controllers\UserController;
@@ -24,7 +24,7 @@ Route::prefix('v1')->group(function () {
         Route::get('user', [UserController::class, 'user']);
         Route::post('register', [UserController::class, 'register']);
         Route::get('logout', [UserController::class, 'logout']);
-        Route::post('mpesa-transaction', [MpesaTransactionController::class, 'store']);
+        Route::post('transaction', [TransactionController::class, 'store']);
         Route::apiResource('transaction-category', TransactionCategoryController::class);
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
     });

@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Actions\IdentifyMpesaTransactionCategory;
 use App\Http\Requests\MpesaTransactionRequest;
-use App\Models\MpesaTransaction;
+use App\Models\Transaction;
 use App\Services\MpesaTransactionService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class MpesaTransactionController extends Controller
+class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -50,10 +50,10 @@ class MpesaTransactionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\MpesaTransaction  $mpesaTransaction
+     * @param  \App\Models\Transaction  $mpesaTransaction
      * @return \Illuminate\Http\Response
      */
-    public function show(MpesaTransaction $mpesaTransaction)
+    public function show(Transaction $mpesaTransaction)
     {
         //
     }
@@ -62,10 +62,10 @@ class MpesaTransactionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\MpesaTransaction  $mpesaTransaction
+     * @param  \App\Models\Transaction  $mpesaTransaction
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MpesaTransaction $mpesaTransaction)
+    public function update(Request $request, Transaction $mpesaTransaction)
     {
         //
     }
@@ -73,10 +73,10 @@ class MpesaTransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\MpesaTransaction  $mpesaTransaction
+     * @param  \App\Models\Transaction  $mpesaTransaction
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MpesaTransaction $mpesaTransaction)
+    public function destroy(Transaction $mpesaTransaction)
     {
         //
     }

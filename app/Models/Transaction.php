@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MpesaTransaction extends Model
+class Transaction extends Model
 {
     use HasUuid, HasFactory, StoresUserId;
 
@@ -26,6 +26,7 @@ class MpesaTransaction extends Model
         'transaction_category_id',
         'transaction_sub_category_id',
         'date',
+        'transaction_cost',
     ];
 
     protected function subject(): Attribute
