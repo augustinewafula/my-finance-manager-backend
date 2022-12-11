@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 
 class TransactionController extends Controller
 {
@@ -27,11 +28,15 @@ class TransactionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param MpesaTransactionRequest $request
+     * @param IdentifyMpesaTransactionCategory $identifyMpesaTransactionCategory
      * @param MpesaTransactionService $mpesaTransactionService
      * @return JsonResponse
-     * @throws Exception
+     * @throws JsonException
      */
-    public function store(MpesaTransactionRequest $request, IdentifyMpesaTransactionCategory $identifyMpesaTransactionCategory, MpesaTransactionService $mpesaTransactionService): JsonResponse
+    public function storeMpesaTransaction(
+        MpesaTransactionRequest $request,
+        IdentifyMpesaTransactionCategory $identifyMpesaTransactionCategory,
+        MpesaTransactionService $mpesaTransactionService): JsonResponse
     {
         $decoded_mpesa_transaction_message = $mpesaTransactionService->decodeMpesaTransactionMessage($request->message);
         Log::info('decoded_mpesa_transaction_message: ' . json_encode($decoded_mpesa_transaction_message, JSON_THROW_ON_ERROR));
@@ -43,7 +48,11 @@ class TransactionController extends Controller
             ], 405);
         }
 
-        $mpesa_transaction = $mpesaTransactionService->store($request->message, $decoded_mpesa_transaction_message, $identifyMpesaTransactionCategory);
+        $mpesa_transaction = $mpesaTransactionService->store(
+            $request->message,
+            $decoded_mpesa_transaction_message,
+            $identifyMpesaTransactionCategory
+        );
         return response()->json($mpesa_transaction, 201);
     }
 

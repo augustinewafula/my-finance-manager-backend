@@ -24,7 +24,7 @@ Route::prefix('v1')->group(function () {
         Route::get('user', [UserController::class, 'user']);
         Route::post('register', [UserController::class, 'register']);
         Route::get('logout', [UserController::class, 'logout']);
-        Route::post('transaction', [TransactionController::class, 'store']);
+        Route::post('mpesa-transaction', [TransactionController::class, 'storeMpesaTransaction']);
         Route::apiResource('transaction-category', TransactionCategoryController::class);
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
     });
