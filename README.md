@@ -1,5 +1,5 @@
 # My finance Manager Backend
-This is a web-based application built using the Laravel framework that helps individuals manage their personal finance. It allows users to track their spending and saving habits, set budgets, and connect to their M-pesa account to automatically capture and record transactions.
+This is an application built using the Laravel framework that helps individuals manage their personal finance. It allows users to track their spending and saving habits, set budgets, and connect to their M-pesa account to automatically capture and record transactions.
 
 **Note: This project is still in development and not yet ready for production use.**
 
