@@ -17,7 +17,7 @@ This is an application built using the Laravel framework that helps individuals 
 
 ## Installation
 * Clone the repo ` git clone https://github.com/augustinewafula/my-finance-manager-backend `
-* `cd ` to project folder.
+* `cd my-finance-manager-backend` to project folder.
 * Run ` composer install `
 * Copy the `.env.example` file to `.env` and set your database information
 * Run ` php artisan key:generate` to generate the app key
