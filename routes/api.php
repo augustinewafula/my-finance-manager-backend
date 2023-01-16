@@ -20,9 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::post('login', [UserController::class, 'login']);
+    Route::post('register', [UserController::class, 'register']);
     Route::group(['middleware' => ['auth:sanctum']], static function () {
         Route::get('user', [UserController::class, 'user']);
-        Route::post('register', [UserController::class, 'register']);
         Route::get('logout', [UserController::class, 'logout']);
         Route::post('mpesa-transaction', [TransactionController::class, 'storeMpesaTransaction']);
         Route::apiResource('transaction-category', TransactionCategoryController::class);
