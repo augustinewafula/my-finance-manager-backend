@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasUuid;
 use App\Traits\StoresUserId;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,15 @@ class Transaction extends Model
         'transaction_cost',
     ];
 
+    protected $dates = [
+        'date',
+    ];
+
+    public function scopeCurrentUser(Builder $query): Builder
+    {
+        return $query->where('user_id', auth()->id());
+    }
+
     protected function subject(): Attribute
     {
         return Attribute::make(
@@ -45,5 +55,10 @@ class Transaction extends Model
     public function transactionCategory(): BelongsTo
     {
         return $this->belongsTo(TransactionCategory::class);
+    }
+
+    public function transactionSubCategory(): BelongsTo
+    {
+        return $this->belongsTo(TransactionSubCategory::class);
     }
 }

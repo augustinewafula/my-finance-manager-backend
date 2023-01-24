@@ -9,6 +9,8 @@ use App\Services\MpesaTransactionService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use JsonException;
 
@@ -17,11 +19,25 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $transactions = Transaction::currentUser()
+            ->with(['transactionCategory', 'transactionSubCategory'])
+            ->select(['id', 'reference_code', 'message', 'amount', 'transaction_cost', 'subject', 'type', 'date', 'transaction_category_id', 'transaction_sub_category_id'])
+            ->latest('date')
+            ->get()
+            ->groupBy(function($transaction) {
+                return $transaction->date->format('Y-m-d');
+            });
+
+        $currentPage = (int) $request->get('page', 1);
+        $perPage = 10;
+        $items = $transactions->forPage($currentPage, $perPage);
+        $paginator = new LengthAwarePaginator($items, $transactions->count(), $perPage);
+
+        return response()->json($paginator);
     }
 
     /**

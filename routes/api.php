@@ -24,6 +24,7 @@ Route::prefix('v1')->group(function () {
     Route::group(['middleware' => ['auth:sanctum']], static function () {
         Route::get('user', [UserController::class, 'user']);
         Route::get('logout', [UserController::class, 'logout']);
+        Route::apiResource('transaction', TransactionController::class);
         Route::post('mpesa-transaction', [TransactionController::class, 'storeMpesaTransaction']);
         Route::apiResource('transaction-category', TransactionCategoryController::class);
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
