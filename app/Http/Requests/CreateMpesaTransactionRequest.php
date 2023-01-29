@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransactionSubCategoryRequest extends FormRequest
+class CreateMpesaTransactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,12 +21,10 @@ class TransactionSubCategoryRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'transaction_category_id' => 'required|string|exists:transaction_categories,id|max:255',
+            'message' => 'required|string|max:400',
         ];
     }
-
 }

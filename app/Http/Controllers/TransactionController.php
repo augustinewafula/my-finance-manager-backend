@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\IdentifyMpesaTransactionCategory;
-use App\Http\Requests\MpesaTransactionRequest;
+use App\Http\Requests\CreateMpesaTransactionRequest;
 use App\Models\Transaction;
 use App\Services\MpesaTransactionService;
 use Exception;
@@ -43,16 +43,16 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param MpesaTransactionRequest $request
+     * @param CreateMpesaTransactionRequest $request
      * @param IdentifyMpesaTransactionCategory $identifyMpesaTransactionCategory
      * @param MpesaTransactionService $mpesaTransactionService
      * @return JsonResponse
      * @throws JsonException
      */
     public function storeMpesaTransaction(
-        MpesaTransactionRequest $request,
+        CreateMpesaTransactionRequest    $request,
         IdentifyMpesaTransactionCategory $identifyMpesaTransactionCategory,
-        MpesaTransactionService $mpesaTransactionService): JsonResponse
+        MpesaTransactionService          $mpesaTransactionService): JsonResponse
     {
         $decoded_mpesa_transaction_message = $mpesaTransactionService->decodeMpesaTransactionMessage($request->message);
         Log::info('decoded_mpesa_transaction_message: ' . json_encode($decoded_mpesa_transaction_message, JSON_THROW_ON_ERROR));

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TransactionCategoryRequest;
+use App\Http\Requests\CreateTransactionCategoryRequest;
 use App\Models\TransactionCategory;
 use App\Services\TransactionCategoryService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -28,11 +28,11 @@ class TransactionCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param TransactionCategoryRequest $request
+     * @param CreateTransactionCategoryRequest $request
      * @param TransactionCategoryService $transactionCategoryService
      * @return JsonResponse
      */
-    public function store(TransactionCategoryRequest $request, TransactionCategoryService $transactionCategoryService): JsonResponse
+    public function store(CreateTransactionCategoryRequest $request, TransactionCategoryService $transactionCategoryService): JsonResponse
     {
         $transactionCategory = $transactionCategoryService->store($request->name);
         return response()->json($transactionCategory, 201);
