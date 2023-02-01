@@ -35,7 +35,7 @@ class BondService
     /**
      * @throws Exception
      */
-    public function storeBond(string $issue_number, float $coupon_rate, float $amount_invested, array $dates): ?Bond
+    public function storeBond(string $issue_number, float $coupon_rate, float $amount_invested, array $dates): Bond
     {
         try {
             DB::beginTransaction();
@@ -46,12 +46,13 @@ class BondService
             ]);
             $this->storeBondInterestPayingDates($bond->id, $dates);
             DB::commit();
+
+            return $bond;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage());
             throw $e;
         }
-        return null;
     }
 
     private function storeBondInterestPayingDates(string $bondId, array $dates): void
