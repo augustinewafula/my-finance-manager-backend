@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BondController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionCategoryController;
 use App\Http\Controllers\TransactionSubCategoryController;
@@ -28,6 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::post('mpesa-transaction', [TransactionController::class, 'storeMpesaTransaction']);
         Route::apiResource('transaction-category', TransactionCategoryController::class);
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
+        Route::apiResource('bond', BondController::class);
     });
 });
 Route::fallback(static function () {
