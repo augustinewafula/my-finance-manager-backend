@@ -34,7 +34,7 @@ class Transaction extends Model
         'date',
     ];
 
-    public function scopeCurrentUser(Builder $query): Builder
+    public function scopeForCurrentUser(Builder $query): Builder
     {
         return $query->where('user_id', auth()->id());
     }
