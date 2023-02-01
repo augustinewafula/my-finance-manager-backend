@@ -19,13 +19,13 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
         $transactions = Transaction::currentUser()
             ->with(['transactionCategory', 'transactionSubCategory'])
-            ->select(['id', 'reference_code', 'message', 'amount', 'transaction_cost', 'subject', 'type', 'date', 'transaction_category_id', 'transaction_sub_category_id'])
             ->latest('date')
             ->get()
             ->groupBy(function($transaction) {
