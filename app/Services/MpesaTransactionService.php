@@ -15,70 +15,53 @@ use Illuminate\Validation\ValidationException;
 
 class MpesaTransactionService
 {
-    public function decodeMpesaTransactionMessage($message): array
+    public function decodeMpesaTransactionMessage(string $message): array
     {
         $type = $this->getTransactionType($message);
-        $message_array = Str::of($message)->explode(' ');
-        $reference_code = $message_array[0];
+        $messageArray = Str::of($message)->explode(' ');
+        $referenceCode = $messageArray[0];
 
-        $sliced_message_as_from_ksh = Str::of($message)->after('Ksh');
-        $sliced_message_array_as_from_ksh = Str::of($sliced_message_as_from_ksh)->explode(' ');
+        $amountStr = Str::of($message)->after('Ksh')->before(' sent to');
+        $amount = (int) str_replace(',', '', $amountStr);
 
-        $amount = $sliced_message_array_as_from_ksh[0];
-        $amount = Str::of($amount)->remove(',')->toString();
+        Log::info("message: $message");
+        Log::info("type: $type");
 
-        Log::info('message: '. $message);
-        Log::info('type: ' . $type);
+        $subject = match ($type) {
+            TransactionType::SENT, TransactionType::PAID => Str::between($message, ' to ', ' on'),
+            TransactionType::RECEIVED => Str::between($message, ' from ', ' on'),
+            TransactionType::WITHDRAW => Str::between($message, ' from ', 'Ksh'),
+            Str::contains($message, 'airtime') => Str::between($message, ' of ', ' on'),
+            Str::contains($message, 'balance was') => 'ignore balance',
+            default => 'Unknown',
+        };
 
-        if ($type === TransactionType::SENT || $type === TransactionType::PAID) {
-            $subject = Str::betweenFirst($message, ' to ', ' on ');
-            $date = Str::betweenFirst($message, ' on ', ' at ');
-            $time = Str::betweenFirst($message, ' at ', '.');
-            if (strlen($time) > 8) {
-                $time = Str::betweenFirst($message, ' at ', ' New');
-            }
-        } elseif ($type === TransactionType::RECEIVED) {
-            $subject = Str::betweenFirst($message, ' from ', ' on ');
-            $date = Str::betweenFirst($message, ' on ', ' at ');
-            $time = Str::of($message)->betweenFirst(' at ', 'New ')->remove('.');
-        } elseif ($type === TransactionType::WITHDRAW) {
-            $subject = Str::betweenFirst($message, ' from ', 'New ');
-            $date = Str::betweenFirst($message, '.on ', ' at ');
-            $time = Str::betweenFirst($message, ' at ', 'Withdraw');
-        } elseif (Str::of($message)->contains('airtime')) {
-            $subject = Str::betweenFirst($message, ' of ', ' on ');
-            $date = Str::betweenFirst($message, ' on ', ' at ');
-            $time = Str::of($message)->betweenFirst(' at ', 'New ')->remove('.');
-        } elseif (Str::of($message)->contains('balance was')) {
-            $subject = 'ignore balance';
-            $date = Str::betweenFirst($message, ' on ', ' at ');
-            $time = Str::of($message)->betweenFirst(' at ', 'Send ')->remove('.');
-        } else {
-            $subject = 'Unknown';
-            $date = Carbon::now()->format('d/m/y');
-            $time = Carbon::now()->format('g:i A');
-        }
-        $subject = Str::squish($subject);
-        $date = Str::of($date)->trim()->toString();
-        $time = Str::of($time)->trim()->toString();
-        $transaction_cost = $this->getTransactionCost($message);
-        Log::info('subject: ' . $subject);
-        Log::info('date: ' . $date);
-        Log::info('time: ' . $time);
-        Log::info('transaction_cost: ' . $transaction_cost);
+        $subject = Str::of($subject)->trim()->toString();
+        $dateStr = Str::between($message, 'on ', ' at');
+        $timeStr = Str::of($message)->after('at ')->beforeLast('.');
+        $timeStr = Str::of($timeStr)->before('New')->trim()->toString();
 
-        $full_date = Carbon::createFromFormat('d/m/y g:i A', "$date $time")->toDateTimeString();
+        Log::info("subject: $subject");
+        Log::info("date: $dateStr");
+        Log::info("time: $timeStr");
+
+        $transactionCost = $this->getTransactionCost($message);
+
+        Log::info("transaction_cost: $transactionCost");
+
+        $fullDateStr = "$dateStr $timeStr";
+        $fullDate = Carbon::createFromFormat('d/m/y g:i A', $fullDateStr)->toDateTimeString();
 
         return [
-            'reference_code' => $reference_code,
+            'reference_code' => $referenceCode,
             'type' => $type,
             'amount' => $amount,
             'subject' => $subject,
-            'date' => $full_date,
-            'transaction_cost' => $transaction_cost,
+            'date' => $fullDate,
+            'transaction_cost' => $transactionCost,
         ];
-
     }
+
 
     private function getTransactionType(String $message): int
     {
