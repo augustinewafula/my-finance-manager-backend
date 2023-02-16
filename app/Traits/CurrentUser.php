@@ -8,7 +8,7 @@ trait CurrentUser
 {
     public function scopeCurrentUser(Builder $query): Builder
     {
-        return $query->where($this->getTable() . 'user_id', auth()->id());
+        return $query->where($this->getTable() . '.user_id', auth()->id());
     }
 
 }
