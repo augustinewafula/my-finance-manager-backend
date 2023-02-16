@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\CurrentUser;
 use App\Traits\HasUuid;
 use App\Traits\StoresUserId;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
-    use HasUuid, HasFactory, StoresUserId;
+    use HasUuid, HasFactory, StoresUserId, CurrentUser;
 
     public $incrementing = false;
     protected $keyType = 'uuid';
@@ -33,11 +34,6 @@ class Transaction extends Model
     protected $dates = [
         'date',
     ];
-
-    public function scopeForCurrentUser(Builder $query): Builder
-    {
-        return $query->where('user_id', auth()->id());
-    }
 
     protected function subject(): Attribute
     {
