@@ -24,7 +24,7 @@ class TransactionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $transactions = Transaction::forCurrentUser()
+        $transactions = Transaction::currentUser()
             ->with(['transactionCategory', 'transactionSubCategory'])
             ->latest('date')
             ->get()
