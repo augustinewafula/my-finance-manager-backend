@@ -19,8 +19,8 @@ class BondInterestPayingDate extends Model
         'date',
     ];
 
-    protected $dates = [
-        'date',
+    protected $casts = [
+        'date' => 'date',
     ];
 
     public function bond(): BelongsTo

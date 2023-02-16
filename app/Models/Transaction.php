@@ -31,8 +31,8 @@ class Transaction extends Model
         'transaction_cost',
     ];
 
-    protected $dates = [
-        'date',
+    protected $casts = [
+        'date' => 'date',
     ];
 
     protected function subject(): Attribute
