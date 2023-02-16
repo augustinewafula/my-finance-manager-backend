@@ -15,11 +15,11 @@ class BondController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        return response()->json(Bond::currentUser()->with('interestPayingDates')->get());
     }
 
     /**
