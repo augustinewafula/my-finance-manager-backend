@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBondRequest;
+use App\Http\Resources\BondResource;
 use App\Models\Bond;
 use App\Services\BondService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -15,11 +17,11 @@ class BondController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return JsonResponse
+     * @return AnonymousResourceCollection
      */
-    public function index(): JsonResponse
+    public function index(): AnonymousResourceCollection
     {
-        return response()->json(Bond::currentUser()->with('interestPayingDates')->get());
+        return BondResource::collection(Bond::currentUser()->with('interestPayingDates')->get());
     }
 
     /**
