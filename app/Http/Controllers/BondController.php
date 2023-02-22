@@ -21,7 +21,7 @@ class BondController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
-        return BondResource::collection(Bond::currentUser()->with('interestPayingDates')->get());
+        return BondResource::collection(Bond::currentUser()->with('interestPayingDates')->paginate());
     }
 
     /**
