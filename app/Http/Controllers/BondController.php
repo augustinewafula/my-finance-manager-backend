@@ -64,24 +64,21 @@ class BondController extends Controller
 
     private function transformDatesStringToArray(string $dates): array
     {
-        $dates = Str::of($dates)->trim()->toString();
-        $dates = str_replace(PHP_EOL, ' ', $dates);
+        $dates = str_replace(',', ' ', $dates);
         $separatedDates = [];
-        $dateFragment = "";
-        for ($i = 0, $iMax = strlen($dates); $i < $iMax; $i++) {
-            $char = $dates[$i];
-            if ($char === " ") {
-                if ($dateFragment !== "") {
-                    $separatedDates[] = $dateFragment;
-                }
-                $dateFragment = "";
-                continue;
-            }
-            $dateFragment .= $char;
-            $dateFragment = Str::of($dateFragment)->trim()->toString();
+        $dateFragments = explode(' ', $dates);
+
+        foreach ($dateFragments as $dateFragment) {
+            $dateFragment = trim($dateFragment);
             if (strlen($dateFragment) === 10) {
                 $separatedDates[] = $dateFragment;
-                $dateFragment = "";
+            } elseif (strlen($dateFragment) > 10) {
+                $subFragments = preg_split('/[\s,]+/', $dateFragment);
+                foreach ($subFragments as $subFragment) {
+                    if (strlen($subFragment) === 10) {
+                        $separatedDates[] = $subFragment;
+                    }
+                }
             }
         }
 
