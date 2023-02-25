@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\CurrentUser;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TransactionCategory extends Model
 {
-    use HasUuid, HasFactory, StoresCreatedBy;
+    use HasUuid, HasFactory, StoresCreatedBy, CurrentUser;
 
     public $incrementing = false;
     protected $keyType = 'uuid';
@@ -33,11 +34,6 @@ class TransactionCategory extends Model
     public function scopeDefault(Builder $query): Builder
     {
         return $query->whereCreatedBy(null);
-    }
-
-    public function scopeForCurrentUser(Builder $query): Builder
-    {
-        return $query->whereCreatedBy(auth()->id());
     }
 
     public function users(): BelongsToMany
