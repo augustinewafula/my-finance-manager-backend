@@ -61,7 +61,7 @@ class BondService
         foreach ($dates as $date) {
             BondInterestPayingDate::create([
                 'bond_id' => $bondId,
-                'date' => Carbon::createFromFormat('d/m/Y', $date)
+                'date' => $date
             ]);
         }
     }
