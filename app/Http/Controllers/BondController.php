@@ -139,10 +139,14 @@ class BondController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Bond $bond
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy(Bond $bond)
+    public function destroy(Bond $bond): JsonResponse
     {
-        //
+        $bond->delete();
+
+        return response()->json([
+            'message' => 'Bond deleted successfully'
+        ]);
     }
 }
