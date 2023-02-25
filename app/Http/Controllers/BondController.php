@@ -9,6 +9,7 @@ use App\Services\BondService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -36,7 +37,7 @@ class BondController extends Controller
     {
         $dates = $this->transformDatesStringToArray($request->interest_payment_dates);
 
-        if ($bondService->areValidDates($dates)) {
+        if (count($dates) > 0 && $bondService->areValidDates($dates)) {
             try {
                 $bond = $bondService->storeBond(
                     $request->issue_number,
@@ -58,7 +59,7 @@ class BondController extends Controller
 
         return response()->json([
             'message' => 'Invalid dates'
-        ], 400);
+        ], 422);
 
     }
 
@@ -88,8 +89,8 @@ class BondController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Bond  $bond
-     * @return \Illuminate\Http\Response
+     * @param Bond $bond
+     * @return Response
      */
     public function show(Bond $bond)
     {
@@ -99,20 +100,46 @@ class BondController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Bond  $bond
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Bond $bond
+     * @param BondService $bondService
+     * @return JsonResponse
      */
-    public function update(Request $request, Bond $bond)
+    public function update(Request $request, Bond $bond, BondService $bondService): JsonResponse
     {
-        //
+        $dates = $this->transformDatesStringToArray($request->interest_payment_dates);
+
+        if (count($dates) > 0 && $bondService->areValidDates($dates)) {
+            try {
+                $bond = $bondService->updateBond(
+                    $bond,
+                    $request->issue_number,
+                    $request->coupon_rate,
+                    $request->amount_invested,
+                    $dates
+                );
+
+                return response()->json([
+                    'message' => 'Bond updated successfully',
+                    'bond' => $bond
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Error updating bond'
+                ], 500);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Invalid dates'
+        ], 422);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Bond  $bond
-     * @return \Illuminate\Http\Response
+     * @param Bond $bond
+     * @return Response
      */
     public function destroy(Bond $bond)
     {

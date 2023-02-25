@@ -21,7 +21,6 @@ class BondService
                     $carbon = Carbon::createFromFormat($format, $date);
                     break;
                 } catch (\InvalidArgumentException $e) {
-                    Log::info('Invalid date: ' . $date. ' with format: ' . $format);
                     continue;
                 }
             }
@@ -55,6 +54,36 @@ class BondService
         }
     }
 
+    /**
+     * @throws Exception
+     */
+    public function updateBond(
+        Bond $bond,
+        string $issue_number,
+        float $coupon_rate,
+        float $amount_invested,
+        array $dates
+    ): Bond
+    {
+        try {
+            DB::beginTransaction();
+            $bond->update([
+                'issue_number' => $issue_number,
+                'coupon_rate' => $coupon_rate,
+                'amount_invested' => $amount_invested
+            ]);
+            $this->deleteInterestPayingDates($bond->id);
+            $this->storeBondInterestPayingDates($bond->id, $dates);
+            DB::commit();
+
+            return $bond;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            throw $e;
+        }
+    }
+
     private function storeBondInterestPayingDates(string $bondId, array $dates): void
     {
 
@@ -66,15 +95,9 @@ class BondService
         }
     }
 
-    public function updateBond($request, $bond)
+    private function deleteInterestPayingDates(string $bondId): void
     {
-        $bond->update([
-            'issue_number' => $request->issue_number,
-            'coupon_rate' => $request->coupon_rate,
-            'amount_invested' => $request->amount_invested
-        ]);
-
-        return $bond;
+        BondInterestPayingDate::where('bond_id', $bondId)->delete();
     }
 
 }
