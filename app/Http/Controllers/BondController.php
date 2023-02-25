@@ -112,6 +112,7 @@ class BondController extends Controller
         $dates = $this->transformDatesStringToArray($request->interest_payment_dates);
 
         if (count($dates) > 0 && $bondService->areValidDates($dates)) {
+            $dates = $bondService->convertDatesToCarbon($dates);
             try {
                 $bond = $bondService->updateBond(
                     $bond,
