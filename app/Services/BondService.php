@@ -14,7 +14,7 @@ class BondService
     function areValidDates(array $dates): bool
     {
         foreach ($dates as $date) {
-            $formats = ['d/m/Y', 'Y-m-d'];
+            $formats = ['d/m/Y', 'Y-m-d', 'd-m-Y'];
             $carbon = null;
             foreach ($formats as $format) {
                 try {
