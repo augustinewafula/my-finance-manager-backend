@@ -6,6 +6,7 @@ use App\Http\Requests\CreateBondRequest;
 use App\Http\Resources\BondResource;
 use App\Models\Bond;
 use App\Services\BondService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -31,13 +32,14 @@ class BondController extends Controller
      * @param CreateBondRequest $request
      * @param BondService $bondService
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function store(CreateBondRequest $request, BondService $bondService): JsonResponse
     {
         $dates = $this->transformDatesStringToArray($request->interest_payment_dates);
 
         if (count($dates) > 0 && $bondService->areValidDates($dates)) {
+            $dates = $bondService->convertDatesToCarbon($dates);
             try {
                 $bond = $bondService->storeBond(
                     $request->issue_number,
@@ -50,7 +52,7 @@ class BondController extends Controller
                     'message' => 'Bond created successfully',
                     'bond' => $bond
                 ], 201);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'message' => 'Error creating bond'
                 ], 500);
@@ -123,7 +125,7 @@ class BondController extends Controller
                     'message' => 'Bond updated successfully',
                     'bond' => $bond
                 ]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'message' => 'Error updating bond'
                 ], 500);
