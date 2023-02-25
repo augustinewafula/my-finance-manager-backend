@@ -97,6 +97,24 @@ class BondsTest extends TestCase
         ]);
     }
 
+    public function test_authenticated_user_can_delete_bonds(): void
+    {
+        $createBondResponse = $this->createBond();
+        $bondId = $createBondResponse->json('bond.id');
+
+        $response = $this->actingAs($this->user, 'sanctum')->delete("/api/v1/bonds/$bondId", [
+            'Accept' => 'application/json'
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'message' => 'Bond deleted successfully'
+        ]);
+        $this->assertDatabaseMissing('bonds', [
+            'id' => $bondId
+        ]);
+    }
+
     private function createUser(): User
     {
         return User::factory()->create(['password' => bcrypt('password')]);
