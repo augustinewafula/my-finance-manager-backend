@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class BondService
 {
+    protected array $validDateFormats = ['d/m/Y', 'Y-m-d', 'd-m-Y'];
+
     public function areValidDates(array $dates): bool
     {
         foreach ($dates as $date) {
-            $formats = ['d/m/Y', 'Y-m-d', 'd-m-Y'];
             $carbon = null;
-            foreach ($formats as $format) {
+            foreach ($this->validDateFormats as $format) {
                 try {
                     $carbon = Carbon::createFromFormat($format, $date);
                     break;
@@ -35,9 +36,8 @@ class BondService
     {
         $carbonDates = [];
         foreach ($dates as $date) {
-            $formats = ['d/m/Y', 'Y-m-d', 'd-m-Y'];
             $carbon = null;
-            foreach ($formats as $format) {
+            foreach ($this->validDateFormats as $format) {
                 try {
                     $carbon = Carbon::createFromFormat($format, $date);
                     break;
