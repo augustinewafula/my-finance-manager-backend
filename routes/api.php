@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analytics\BondAnalyticsController;
 use App\Http\Controllers\BondController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionCategoryController;
@@ -30,6 +31,7 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('transaction-category', TransactionCategoryController::class);
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
         Route::apiResource('bonds', BondController::class);
+        Route::get('analytics/bonds/interest-data', [BondAnalyticsController::class, 'getUserInterestData']);
     });
 });
 Route::fallback(static function () {
