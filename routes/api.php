@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
         Route::get('analytics/bonds/monthly-interest-data/{year}', [BondAnalyticsController::class, 'getMonthlyInterestGraphData']);
         Route::get('analytics/bonds/interest-data-years', [BondAnalyticsController::class, 'getUniqueInterestDateYears']);
         Route::get('analytics/bonds/upcoming-interest-data', [BondAnalyticsController::class, 'getUpcomingInterests']);
+        Route::get('analytics/bonds/bonds-data', [BondAnalyticsController::class, 'getBondsData']);
     });
 });
 Route::fallback(static function () {

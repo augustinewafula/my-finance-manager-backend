@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bond;
 use App\Models\BondInterestPayingDate;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -114,6 +115,47 @@ class BondAnalyticsController extends Controller
             ->orderBy('bond_interest_paying_dates.date', 'asc')
             ->limit(12)
             ->get();
+    }
+
+    public function getBondsData(): JsonResponse
+    {
+        $currentYear = Carbon::now()->year;
+
+        $bonds = Bond::with(['interestPayingDates' => function ($query) use ($currentYear) {
+            $query->whereYear('date', $currentYear)
+                ->orderBy('date', 'asc');
+        }])->currentUser()->get();
+
+        $bondData = [];
+
+        foreach ($bonds as $bond) {
+            $totalInterest = 0;
+            $interestMonths = [];
+
+            foreach ($bond->interestPayingDates as $interest) {
+                $totalInterest += (($bond->coupon_rate * $bond->amount_invested) / 100) / 2;
+                $interestMonth = Carbon::parse($interest->date)->format('F');
+                if (!in_array($interestMonth, $interestMonths, true)) {
+                    $interestMonths[] = $interestMonth;
+                }
+            }
+            usort($interestMonths, static function ($a, $b) {
+                return Carbon::parse($a)->format('m') - Carbon::parse($b)->format('m');
+            });
+
+            $bondData[] = [
+                'issue_number' => $bond->issue_number,
+                'total_interest_per_annum' => $totalInterest,
+                'interest_paying_months' => $interestMonths,
+            ];
+        }
+        usort($bondData, static function ($a, $b) {
+            $aMonth = $a['interest_paying_months'][0] ?? '';
+            $bMonth = $b['interest_paying_months'][0] ?? '';
+            return Carbon::parse($aMonth)->format('m') - Carbon::parse($bMonth)->format('m');
+        });
+
+        return response()->json($bondData);
     }
 
 
