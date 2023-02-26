@@ -32,6 +32,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('transaction-sub-category', TransactionSubCategoryController::class);
         Route::apiResource('bonds', BondController::class);
         Route::get('analytics/bonds/interest-data', [BondAnalyticsController::class, 'getUserInterestData']);
+        Route::get('analytics/bonds/monthly-interest-data/{year}', [BondAnalyticsController::class, 'getMonthlyInterestGraphData']);
+        Route::get('analytics/bonds/interest-data-years', [BondAnalyticsController::class, 'getUniqueInterestDateYears']);
     });
 });
 Route::fallback(static function () {
