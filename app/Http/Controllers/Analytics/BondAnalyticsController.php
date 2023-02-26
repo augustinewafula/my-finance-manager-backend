@@ -8,6 +8,7 @@ use App\Models\BondInterestPayingDate;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BondAnalyticsController extends Controller
 {
@@ -102,5 +103,18 @@ class BondAnalyticsController extends Controller
             ->toArray();
         return $years;
     }
+
+    public function getUpcomingInterests()
+    {
+        $user = Auth::user();
+        return BondInterestPayingDate::select('bonds.issue_number', 'bond_interest_paying_dates.date', DB::raw('ROUND((bonds.amount_invested * bonds.coupon_rate / 100) / 2, 2) as interest_amount'))
+            ->join('bonds', 'bond_interest_paying_dates.bond_id', '=', 'bonds.id')
+            ->where('bonds.user_id', '=', $user->id)
+            ->where('bond_interest_paying_dates.date', '>=', Carbon::today())
+            ->orderBy('bond_interest_paying_dates.date', 'asc')
+            ->limit(12)
+            ->get();
+    }
+
 
 }
