@@ -107,7 +107,7 @@ class BondAnalyticsController extends Controller
 
     public function getUpcomingInterests(Request $request)
     {
-        $limit = $request->get('limit', 10);
+        $limit = $request->get('limit', 6);
         $user = Auth::user();
         return BondInterestPayingDate::select('bonds.issue_number', 'bond_interest_paying_dates.date', DB::raw('ROUND((bonds.amount_invested * bonds.coupon_rate / 100) / 2, 2) as interest_amount'))
             ->join('bonds', 'bond_interest_paying_dates.bond_id', '=', 'bonds.id')
