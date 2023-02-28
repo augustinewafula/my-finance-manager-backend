@@ -40,6 +40,7 @@ class MpesaTransactionService
         $dateStr = Str::between($message, 'on ', ' at');
         $timeStr = Str::of($message)->after('at ')->beforeLast('.');
         $timeStr = Str::of($timeStr)->before('New')->trim()->toString();
+        $timeStr = Str::of($timeStr)->replace('.', '')->toString();
 
         Log::info("subject: $subject");
         Log::info("date: $dateStr");
