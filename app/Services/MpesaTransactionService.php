@@ -27,14 +27,27 @@ class MpesaTransactionService
         Log::info("message: $message");
         Log::info("type: $type");
 
-        $subject = match ($type) {
-            TransactionType::SENT, TransactionType::PAID => Str::between($message, ' to ', ' on'),
-            TransactionType::RECEIVED => Str::between($message, ' from ', ' on'),
-            TransactionType::WITHDRAW => Str::between($message, ' from ', 'Ksh'),
-            Str::contains($message, 'airtime') => Str::between($message, ' of ', ' on'),
-            Str::contains($message, 'balance was') => 'ignore balance',
-            default => 'Unknown',
-        };
+        switch ($type) {
+            case TransactionType::SENT:
+            case TransactionType::PAID:
+                $subject = Str::between($message, ' to ', ' on');
+                break;
+            case TransactionType::RECEIVED:
+                $subject = Str::between($message, ' from ', ' on');
+                break;
+            case TransactionType::WITHDRAW:
+                $subject = Str::between($message, ' from ', 'Ksh');
+                break;
+            default:
+                if (Str::contains($message, 'airtime')) {
+                    $subject = Str::between($message, ' of ', ' on');
+                } elseif (Str::contains($message, 'balance was')) {
+                    $subject = 'ignore balance';
+                } else {
+                    $subject = 'Unknown';
+                }
+                break;
+        }
 
         $subject = Str::of($subject)->trim()->toString();
         $dateStr = Str::between($message, 'on ', ' at');
