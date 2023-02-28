@@ -30,17 +30,17 @@ class MpesaTransactionService
         switch ($type) {
             case TransactionType::SENT:
             case TransactionType::PAID:
-                $subject = Str::between($message, ' to ', ' on');
+                $subject = Str::betweenFirst($message, ' to ', ' on');
                 break;
             case TransactionType::RECEIVED:
-                $subject = Str::between($message, ' from ', ' on');
+                $subject = Str::betweenFirst($message, ' from ', ' on');
                 break;
             case TransactionType::WITHDRAW:
-                $subject = Str::between($message, ' from ', 'Ksh');
+                $subject = Str::betweenFirst($message, ' from ', 'Ksh');
                 break;
             default:
                 if (Str::contains($message, 'airtime')) {
-                    $subject = Str::between($message, ' of ', ' on');
+                    $subject = Str::betweenFirst($message, ' of ', ' on');
                 } elseif (Str::contains($message, 'balance was')) {
                     $subject = 'ignore balance';
                 } else {
