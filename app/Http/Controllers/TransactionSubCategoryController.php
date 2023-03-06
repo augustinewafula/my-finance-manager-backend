@@ -58,7 +58,7 @@ class TransactionSubCategoryController extends Controller
      */
     public function destroy(TransactionSubCategory $transactionSubCategory): JsonResponse
     {
-        throw_unless($this->createdByCurrentUser($transactionSubCategory), AuthorizationException::class, 'You are not allowed to delete this category.');
+        throw_unless($this->createdByCurrentUser($transactionSubCategory), AuthorizationException::class, 'You are not allowed to delete this subcategory.');
         $transactionSubCategory->delete();
 
         return response()->json(['message' => 'Transaction subcategory deleted']);
