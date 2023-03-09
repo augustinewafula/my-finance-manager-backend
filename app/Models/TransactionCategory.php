@@ -36,6 +36,11 @@ class TransactionCategory extends Model
         return $query->whereCreatedBy(null);
     }
 
+    public function transactionSubCategories(): HasMany
+    {
+        return $this->hasMany(TransactionSubCategory::class);
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

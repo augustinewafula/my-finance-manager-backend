@@ -20,7 +20,8 @@ class TransactionCategoryController extends Controller
     {
         $transactionCategories = TransactionCategory::default()
             ->orWhere
-            ->forCurrentUser()
+            ->currentUser()
+            ->with('transactionSubCategories')
             ->get();
         return response()->json($transactionCategories);
     }
