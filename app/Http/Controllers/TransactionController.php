@@ -126,6 +126,9 @@ class TransactionController extends Controller
         }
 
         $transaction->save();
+        $transaction = Transaction::where('id', $transaction->id)
+            ->with(['transactionCategory', 'transactionSubCategory'])
+            ->first();
 
         return response()->json([
             'message' => 'Transaction updated successfully',
