@@ -36,7 +36,7 @@ class MpesaTransactionService
                 $subject = Str::betweenFirst($message, ' from ', ' on');
                 break;
             case TransactionType::WITHDRAW:
-                $subject = Str::betweenFirst($message, ' from ', 'Ksh');
+                $subject = Str::betweenFirst($message, ' from ', 'New M-PESA');
                 break;
             default:
                 if (Str::contains($message, 'airtime')) {
@@ -54,6 +54,10 @@ class MpesaTransactionService
         $timeStr = Str::of($message)->after('at ')->beforeLast('.');
         $timeStr = Str::of($timeStr)->before('New')->trim()->toString();
         $timeStr = Str::of($timeStr)->replace('.', '')->toString();
+
+        if ($type === TransactionType::WITHDRAW) {
+            $timeStr = Str::of($timeStr)->before('Withdraw')->trim()->toString();
+        }
 
         Log::info("subject: $subject");
         Log::info("date: $dateStr");
