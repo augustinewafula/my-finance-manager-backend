@@ -62,7 +62,7 @@ class TransactionCategoryController extends Controller
         throw_unless($this->createdByCurrentUser($transactionCategory), AuthorizationException::class, 'You are not allowed to delete this category.');
         $transactionCategory->delete();
 
-        return response()->json(['message' => 'Transaction category deleted']);
+        return response()->json(['message' => 'Transaction category deleted'], 204);
     }
 
     public function createdByCurrentUser($transactionCategory):bool

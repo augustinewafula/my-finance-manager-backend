@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Actions\IdentifyMpesaTransactionCategory;
 use App\Http\Requests\CreateMpesaTransactionRequest;
+use App\Http\Requests\CreateTransactionRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Transaction;
 use App\Services\MpesaTransactionService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +41,20 @@ class TransactionController extends Controller
         $paginator = new LengthAwarePaginator($items, $transactions->count(), $perPage);
 
         return response()->json($paginator);
+    }
+
+    public function store(CreateTransactionRequest $request): JsonResponse
+    {
+        $transaction = Transaction::create([
+            'transaction_category_id' => $request->transaction_category_id,
+            'transaction_sub_category_id' => $request->transaction_sub_category_id,
+            'type' => $request->transaction_type,
+            'amount' => $request->amount,
+            'date' => $request->transaction_date,
+            'subject' => $request->name,
+        ]);
+
+        return response()->json($transaction, 201);
     }
 
     /**
@@ -73,36 +90,63 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Transaction  $mpesaTransaction
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Transaction $mpesaTransaction)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Transaction  $mpesaTransaction
-     * @return \Illuminate\Http\Response
+     * @param UpdateTransactionRequest $request
+     * @param Transaction $transaction
+     * @return JsonResponse
      */
-    public function update(Request $request, Transaction $mpesaTransaction)
+    public function update(UpdateTransactionRequest $request, Transaction $transaction): JsonResponse
     {
-        //
+        $updatedFields = [];
+
+        if ($request->filled('transaction_category_id')) {
+            $transaction->transaction_category_id = $request->transaction_category_id;
+            $updatedFields[] = 'transaction_category_id';
+        }
+
+        if ($request->filled('transaction_sub_category_id')) {
+            $transaction->transaction_sub_category_id = $request->transaction_sub_category_id;
+            $updatedFields[] = 'transaction_sub_category_id';
+        }
+
+        if ($request->filled('amount')) {
+            $transaction->amount = $request->amount;
+            $updatedFields[] = 'amount';
+        }
+
+        if ($request->filled('date')) {
+            $transaction->date = $request->transaction_date;
+            $updatedFields[] = 'date';
+        }
+
+        if ($request->filled('name')) {
+            $transaction->subject = $request->name;
+            $updatedFields[] = 'subject';
+        }
+
+        $transaction->save();
+
+        return response()->json([
+            'message' => 'Transaction updated successfully',
+            'updated_fields' => $updatedFields,
+            'transaction' => $transaction
+        ]);
     }
+
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Transaction  $mpesaTransaction
-     * @return \Illuminate\Http\Response
+     * @param Transaction $transaction
+     * @return JsonResponse
      */
-    public function destroy(Transaction $mpesaTransaction)
+    public function destroy(Transaction $transaction): JsonResponse
     {
-        //
+        $transaction->delete();
+
+        return response()->json([
+            'message' => 'Transaction deleted successfully'
+        ], 204);
     }
 }
