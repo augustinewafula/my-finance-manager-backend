@@ -19,7 +19,13 @@ class TransactionCategoryAndSubCategorySeeder extends Seeder
         $categories = [
             [
                 'name' => 'Food',
-                'sub_categories' => []
+                'sub_categories' => [
+                    'Groceries',
+                    'Restaurant',
+                    'Fast food',
+                    'Coffee shop',
+                    'Other',
+                ],
             ],
             [
                 'name' => 'Entertainment',
@@ -29,7 +35,7 @@ class TransactionCategoryAndSubCategorySeeder extends Seeder
                     'Concert',
                     'Sport',
                     'Other',
-                ]
+                ],
             ],
             [
                 'name' => 'Transport',
@@ -39,7 +45,7 @@ class TransactionCategoryAndSubCategorySeeder extends Seeder
                     'Bus',
                     'Flight',
                     'Other',
-                ]
+                ],
             ],
             [
                 'name' => 'Shopping',
@@ -47,12 +53,41 @@ class TransactionCategoryAndSubCategorySeeder extends Seeder
                     'Clothes',
                     'Shoes',
                     'Accessories',
+                    'Electronics',
                     'Other',
-                ]
+                ],
+            ],
+            [
+                'name' => 'Health',
+                'sub_categories' => [
+                    'Pharmacy',
+                    'Clinic',
+                    'Other',
+                ],
+            ],
+            [
+                'name' => 'Personal Care',
+                'sub_categories' => [
+                    'Cosmetics',
+                    'Haircut',
+                    'Spa',
+                    'Salon',
+                    'Massage',
+                    'Other',
+                ],
+            ],
+            [
+                'name' => 'Travel',
+                'sub_categories' => [
+                    'Accommodation',
+                    'Transportation',
+                    'Tours',
+                    'Other',
+                ],
             ],
             [
                 'name' => 'Other',
-                'sub_categories' => []
+                'sub_categories' => [],
             ],
             [
                 'name' => 'Bills',
@@ -64,16 +99,37 @@ class TransactionCategoryAndSubCategorySeeder extends Seeder
                     'Internet',
                     'Telephone',
                     'Other',
-                ]
+                ],
             ],
             [
                 'name' => 'Friends and family',
-                'sub_categories' => []
+                'sub_categories' => [],
             ],
             [
                 'name' => 'Withdrawal',
-                'sub_categories' => []
-            ]
+                'sub_categories' => [],
+            ],
+            [
+                'name' => 'Income',
+                'sub_categories' => [
+                    'Salary',
+                    'Freelance',
+                    'Investments',
+                    'Other',
+                ],
+            ],
+            [
+                'name' => 'Charity',
+                'sub_categories' => [],
+            ],
+            [
+                'name' => 'Education',
+                'sub_categories' => [],
+            ],
+            [
+                'name' => 'Gifts and donations',
+                'sub_categories' => [],
+            ],
         ];
 
         foreach ($categories as $category) {

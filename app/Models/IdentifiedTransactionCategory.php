@@ -18,7 +18,8 @@ class IdentifiedTransactionCategory extends Model
     protected $fillable = [
         'user_id',
         'subject',
-        'transaction_category_id'
+        'transaction_category_id',
+        'transaction_sub_category_id',
     ];
 
     protected function subject(): Attribute

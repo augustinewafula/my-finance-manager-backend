@@ -4,48 +4,32 @@ namespace App\Actions;
 
 use App\Models\IdentifiedTransactionCategory;
 use App\Models\TransactionCategory;
+use App\Models\TransactionSubCategory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class IdentifyMpesaTransactionCategory
 {
-    public function execute(string $transactionType): array
+    public function execute(string $transactionSubject): array
     {
-        $transactionType = Str::of($transactionType)
+        $transactionSubject = Str::of($transactionSubject)
             ->lower()
             ->toString();
-        Log::info('type: '.$transactionType);
-        if ($category = $this->existsInIdentifiedCategories($transactionType)) {
+        Log::info('type: '.$transactionSubject);
+        if ($category = $this->existsInIdentifiedCategories($transactionSubject)) {
             return $category;
         }
 
-        $preIdentifiedTransactionCategories = $this->getPreIdentifiedTransactionCategories();
+        $identifiedCategory = $this->identifyTransactionCategoryAndSubCategory($transactionSubject);
+        $this->storeIdentifiedTransactionCategory($transactionSubject, $identifiedCategory);
 
-        $category = [];
-        foreach ($preIdentifiedTransactionCategories as $preIdentifiedTransactionCategory) {
-            $identified_category = $this->identify($transactionType, $preIdentifiedTransactionCategory['categoryName'], $preIdentifiedTransactionCategory['keywords']);
-            if($identified_category) {
-                $category = $identified_category;
-                $this->storeIdentifiedTransactionCategory($transactionType, $category);
-                break;
-            }
 
-        }
-
-        if (empty($category)) {
-            $category_id = TransactionCategory::where('name', 'Other')->value('id');
-            $category = [
-                'category_id' => $category_id,
-                'sub_category_id' => null,
-            ];
-        }
-
-        return $category;
+        return $identifiedCategory;
     }
 
-    public function existsInIdentifiedCategories(string $transactionType): bool|array
+    public function existsInIdentifiedCategories(string $transactionSubject): bool|array
     {
-        $identifiedCategory = IdentifiedTransactionCategory::whereSubject($transactionType)->first();
+        $identifiedCategory = IdentifiedTransactionCategory::whereSubject($transactionSubject)->first();
 
         if ($identifiedCategory) {
             return [
@@ -69,26 +53,66 @@ class IdentifyMpesaTransactionCategory
             ['categoryName' => 'Entertainment', 'keywords' => ['entertainment', 'theatre', 'cinema']],
             ['categoryName' => 'Transport', 'keywords' => ['transport', 'bus', 'train']],
             ['categoryName' => 'Bills', 'keywords' => ['bills', 'bill', 'payment']],
+            ['categoryName' => 'Education', 'keywords' => ['school', 'education', 'college', 'university']],
+            ['categoryName' => 'Healthcare', 'keywords' => ['hospital', 'health', 'healthcare', 'medical']],
+            ['categoryName' => 'Insurance', 'keywords' => ['insurance']],
+            ['categoryName' => 'Investments', 'keywords' => ['investments', 'stocks', 'shares', 'equity', 'trading']],
+            ['categoryName' => 'Rent', 'keywords' => ['rent']],
+            ['categoryName' => 'Utilities', 'keywords' => ['utilities', 'water', 'electricity', 'power', 'energy']],
+            ['categoryName' => 'Charity', 'keywords' => ['charity', 'donation']],
+            ['categoryName' => 'Salary', 'keywords' => ['salary', 'wages', 'income']],
+            ['categoryName' => 'Transfer', 'keywords' => ['transfer', 'send', 'receive']],
+            ['categoryName' => 'Savings', 'keywords' => ['savings', 'deposit']],
         ];
     }
 
-    public function identify(string $transactionType, string $categoryName, array $keywords): array
+    private function identifyTransactionCategoryAndSubCategory($transactionSubject): array
     {
-        if (Str::of($transactionType)->contains($keywords)) {
-            $category_id = TransactionCategory::where('name', $categoryName)->value('id');
-            return [
-                'category_id' => $category_id,
-                'sub_category_id' => null,
-            ];
-        }
+        $transactionCategory = null;
+        $transactionSubCategory = null;
+        $preIdentifiedCategories = $this->getPreIdentifiedTransactionCategories();
 
-        return [];
+        foreach ($preIdentifiedCategories as $category) {
+            // check if any keyword in category matches transaction subject
+            foreach ($category['keywords'] as $keyword) {
+                if (stripos($transactionSubject, $keyword)) {
+                    $transactionCategory = TransactionCategory::where('name', $category['categoryName'])
+                        ->with('transactionSubCategories')
+                        ->first();
+                    if (!empty($transactionCategory->transactionSubCategories)) {
+                        // check if any keyword in subcategory matches transaction subject
+                        foreach ($transactionCategory->transactionSubCategories as $subCategory) {
+                            if (stripos($transactionSubject, $subCategory->name)) {
+                                $transactionSubCategory = TransactionSubCategory::where('name', $subCategory->name)
+                                    ->where('transaction_category_id', $transactionCategory->id)
+                                    ->first();
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            if ($transactionCategory !== null) {
+                break;
+            }
+        }
+        if ($transactionCategory === null) {
+            $transactionCategory = TransactionCategory::where('name', 'Other')->first();
+        }
+        $categoryId = $transactionCategory->id;
+        $transactionSubCategoryId = $transactionSubCategory ? $transactionSubCategory->id : null;
+
+        return [
+            'category_id' => $categoryId,
+            'sub_category_id' => $transactionSubCategoryId,
+        ];
     }
 
-    public function storeIdentifiedTransactionCategory(string $transactionType, array $category): void
+    public function storeIdentifiedTransactionCategory(string $transactionSubject, array $category): void
     {
         IdentifiedTransactionCategory::create([
-            'subject' => $transactionType,
+            'subject' => $transactionSubject,
             'transaction_category_id' => $category['category_id'],
             'transaction_sub_category_id' => $category['sub_category_id'],
         ]);
