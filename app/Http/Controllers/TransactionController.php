@@ -6,6 +6,7 @@ use App\Actions\IdentifyMpesaTransactionCategory;
 use App\Http\Requests\CreateMpesaTransactionRequest;
 use App\Http\Requests\CreateTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use App\Models\IdentifiedTransactionCategory;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Services\MpesaTransactionService;
@@ -150,7 +151,16 @@ class TransactionController extends Controller
             $updatedFields[] = 'subject';
         }
 
-        $transaction->save();
+        DB::transaction(function () use ($transaction, $request) {
+            $transaction->save();
+            if ($request->filled('transaction_category_id') || $request->filled('transaction_sub_category_id')) {
+                IdentifiedTransactionCategory::updateOrCreate(['subject' => $transaction->subject], [
+                    'transaction_category_id' => $transaction->transaction_category_id,
+                    'transaction_sub_category_id' => $transaction->transaction_sub_category_id,
+                ]);
+            }
+        });
+
         $transaction = Transaction::where('id', $transaction->id)
             ->with(['transactionCategory', 'transactionSubCategory'])
             ->first();
