@@ -7,6 +7,7 @@ use App\Http\Requests\CreateMpesaTransactionRequest;
 use App\Http\Requests\CreateTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Transaction;
+use App\Models\TransactionCategory;
 use App\Services\MpesaTransactionService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -101,12 +102,36 @@ class TransactionController extends Controller
         $updatedFields = [];
 
         if ($request->filled('transaction_category_id')) {
-            $transaction->transaction_category_id = $request->transaction_category_id;
+            $newCategoryId = $request->transaction_category_id;
+            $newCategory = TransactionCategory::findOrFail($newCategoryId);
+
+            if ($transaction->transaction_sub_category_id && $transaction->transactionSubCategory->transaction_category_id != $newCategoryId) {
+                $transaction->transaction_sub_category_id = null;
+                $updatedFields[] = 'transaction_sub_category_id';
+            }
+
+            $transaction->transaction_category_id = $newCategoryId;
             $updatedFields[] = 'transaction_category_id';
         }
 
         if ($request->filled('transaction_sub_category_id')) {
-            $transaction->transaction_sub_category_id = $request->transaction_sub_category_id;
+            $newSubCategoryId = $request->transaction_sub_category_id;
+            $currentCategoryId = $transaction->transaction_category_id;
+
+            if ($request->filled('transaction_category_id')) {
+                $currentCategoryId = $request->transaction_category_id;
+            }
+
+            $categorySubCategories = TransactionCategory::findOrFail($currentCategoryId)->transactionSubCategories;
+            $subCategory = $categorySubCategories->find($newSubCategoryId);
+
+            if (!$subCategory) {
+                return response()->json(
+                    ['message' => 'Transaction sub category does not belong to transaction category'], 422
+                );
+            }
+
+            $transaction->transaction_sub_category_id = $newSubCategoryId;
             $updatedFields[] = 'transaction_sub_category_id';
         }
 
