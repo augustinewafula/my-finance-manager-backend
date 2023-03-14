@@ -29,16 +29,20 @@ class TransactionController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $currentPage = (int) $request->get('page', 1);
+        $fromDate = $request->get('from_date', now()->subDays(30)->format('Y-m-d'));
+        $toDate = $request->get('to_date', now()->format('Y-m-d'));
+        $perPage = 10;
+
         $transactions = Transaction::currentUser()
             ->with(['transactionCategory', 'transactionSubCategory'])
+            ->whereBetween('date', [$fromDate, $toDate])
             ->latest('date')
             ->get()
             ->groupBy(function($transaction) {
                 return $transaction->date->format('Y-m-d');
             });
 
-        $currentPage = (int) $request->get('page', 1);
-        $perPage = 10;
         $items = $transactions->forPage($currentPage, $perPage);
         $paginator = new LengthAwarePaginator($items, $transactions->count(), $perPage);
 
