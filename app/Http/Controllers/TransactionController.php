@@ -10,6 +10,7 @@ use App\Models\IdentifiedTransactionCategory;
 use App\Models\Transaction;
 use App\Models\TransactionCategory;
 use App\Services\MpesaTransactionService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,6 +34,9 @@ class TransactionController extends Controller
         $fromDate = $request->get('from_date', now()->subDays(30)->format('Y-m-d'));
         $toDate = $request->get('to_date', now()->format('Y-m-d'));
         $perPage = 10;
+
+        $fromDate = Carbon::createFromFormat('Y-m-d', $fromDate)->startOfDay();
+        $toDate = Carbon::createFromFormat('Y-m-d', $toDate)->endOfDay();
 
         $transactions = Transaction::currentUser()
             ->with(['transactionCategory', 'transactionSubCategory'])
