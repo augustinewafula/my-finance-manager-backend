@@ -68,7 +68,11 @@ class MpesaTransactionService
         Log::info("transaction_cost: $transactionCost");
 
         $fullDateStr = "$dateStr $timeStr";
-        $fullDate = Carbon::createFromFormat('d/m/y g:i A', $fullDateStr)->toDateTimeString();
+        try {
+            $fullDate = Carbon::createFromFormat('d/m/y g:i A', $fullDateStr)->toDateTimeString();
+        } catch (Exception $e) {
+            $fullDate = 'Invalid date';
+        }
 
         return [
             'reference_code' => $referenceCode,
