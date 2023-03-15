@@ -20,6 +20,9 @@ class MpesaTransactionService
         $type = $this->getTransactionType($message);
         $messageArray = Str::of($message)->explode(' ');
         $referenceCode = $messageArray[0];
+        if (Str::of($referenceCode)->length() > 15) {
+            $referenceCode = $messageArray[1];
+        }
 
         $amountStr = Str::of($message)->after('Ksh')->before(' sent to');
         $amount = (int) str_replace(',', '', $amountStr);
