@@ -88,7 +88,7 @@ class TransactionController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
-            ], 405);
+            ], 422);
         }
 
         $mpesa_transaction = $mpesaTransactionService->store(
