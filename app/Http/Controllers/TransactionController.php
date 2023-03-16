@@ -18,6 +18,7 @@ use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use JsonException;
 
 class TransactionController extends Controller
@@ -85,10 +86,12 @@ class TransactionController extends Controller
         Log::info('decoded_mpesa_transaction_message: ' . json_encode($decoded_mpesa_transaction_message, JSON_THROW_ON_ERROR));
         try {
             $mpesaTransactionService->validateDecodedMpesaTransactionMessage($decoded_mpesa_transaction_message);
-        } catch (\Throwable $th) {
+        } catch (ValidationException $validationException) {
             return response()->json([
-                'message' => $th->getMessage()
+                'message' => $validationException->getMessage(), 'errors' => ['message' => $validationException->getMessage()]
             ], 422);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
         $mpesa_transaction = $mpesaTransactionService->store(
