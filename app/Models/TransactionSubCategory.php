@@ -36,6 +36,11 @@ class TransactionSubCategory extends Model
         return $query->whereCreatedBy(null);
     }
 
+    public function createdByCurrentUser(): bool
+    {
+        return $this->created_by === auth()->id();
+    }
+
     public function transactionCategory(): BelongsTo
     {
         return $this->belongsTo(TransactionCategory::class);

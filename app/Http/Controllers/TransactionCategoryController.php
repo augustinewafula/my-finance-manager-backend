@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateTransactionCategoryRequest;
+use App\Http\Requests\UpdateTransactionCategoryRequest;
 use App\Models\TransactionCategory;
 use App\Services\TransactionCategoryService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -51,6 +52,20 @@ class TransactionCategoryController extends Controller
     }
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param UpdateTransactionCategoryRequest $request
+     * @param TransactionCategory $transactionCategory
+     * @return JsonResponse
+     */
+    public function update(UpdateTransactionCategoryRequest $request, TransactionCategory $transactionCategory): JsonResponse
+    {
+        $transactionCategory->update($request->only('name'));
+
+        return response()->json($transactionCategory);
+    }
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param TransactionCategory $transactionCategory
@@ -59,14 +74,10 @@ class TransactionCategoryController extends Controller
      */
     public function destroy(TransactionCategory $transactionCategory): JsonResponse
     {
-        throw_unless($this->createdByCurrentUser($transactionCategory), AuthorizationException::class, 'You are not allowed to delete this category.');
+        throw_unless($transactionCategory->createdByCurrentUser($transactionCategory), AuthorizationException::class, 'You are not allowed to delete this category.');
         $transactionCategory->delete();
 
         return response()->json(['message' => 'Transaction category deleted'], 204);
     }
 
-    public function createdByCurrentUser($transactionCategory):bool
-    {
-        return $transactionCategory->created_by === auth()->user()->id;
-    }
 }

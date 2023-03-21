@@ -28,8 +28,8 @@ Route::prefix('v1')->group(function () {
         Route::get('logout', [UserController::class, 'logout']);
         Route::apiResource('transactions', TransactionController::class);
         Route::post('mpesa-transactions', [TransactionController::class, 'storeMpesaTransaction']);
+        Route::apiResource('transaction-categories/{categoryId}/subcategories', TransactionSubCategoryController::class);
         Route::apiResource('transaction-categories', TransactionCategoryController::class);
-        Route::apiResource('transaction-sub-categories', TransactionSubCategoryController::class);
         Route::apiResource('bonds', BondController::class);
         Route::get('analytics/bonds/interest-data', [BondAnalyticsController::class, 'getUserInterestData']);
         Route::get('analytics/bonds/monthly-interest-data/{year}', [BondAnalyticsController::class, 'getMonthlyInterestGraphData']);

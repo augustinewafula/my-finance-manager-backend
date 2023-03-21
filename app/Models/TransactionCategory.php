@@ -36,6 +36,11 @@ class TransactionCategory extends Model
         return $query->whereCreatedBy(null);
     }
 
+    public function createdByCurrentUser(): bool
+    {
+        return $this->created_by === auth()->id();
+    }
+
     public function transactionSubCategories(): HasMany
     {
         return $this->hasMany(TransactionSubCategory::class);
